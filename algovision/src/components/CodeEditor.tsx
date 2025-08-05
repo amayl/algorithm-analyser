@@ -18,7 +18,8 @@ function CodeEditor() {
     <Editor
       width="700px"
       height="400px"
-      defaultLangauge="python"
+      defaultLanguage="python"
+      theme="vs-light"
       onChange={handleEditorChange}
       options={editorOptions}
     />
