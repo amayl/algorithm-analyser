@@ -18,6 +18,7 @@ function CodeEditor() {
     <Editor
       width="700px"
       height="400px"
+      defaultLangauge="python"
       onChange={handleEditorChange}
       options={editorOptions}
     />
