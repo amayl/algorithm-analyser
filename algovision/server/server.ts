@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
 import { Request, Response } from 'express';
 
 // Types for our API
