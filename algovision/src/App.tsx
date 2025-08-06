@@ -2,6 +2,14 @@ import type React from "react";
 import CodeEditor from "./components/CodeEditor";
 
 function App() {
+  // Dark theme app container
+  const appStyle: React.CSSProperties = {
+    minHeight: "100vh",
+    backgroundColor: "#1a1a1a",
+    color: "#ffffff",
+    padding: "20px",
+  };
+
   // css stored in variables for the elements
   // look at me im so smart
   const titleStyle: React.CSSProperties = {
@@ -10,6 +18,7 @@ function App() {
     fontWeight: "bold",
     marginBottom: "1.5rem",
     letterSpacing: "0.5px",
+    color: "#ffffff",
   };
 
   // make the code editor look pretty
@@ -17,11 +26,12 @@ function App() {
     width: "700px",
     height: "400px",
     margin: "0 auto",
-    border: "2px solid #e2e8f0",
+    border: "2px solid #404040",
     borderRadius: "8px",
     boxShadow:
-      "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
     overflow: "hidden",
+    backgroundColor: "#2d2d2d",
   };
 
   // get that button in the middle
@@ -32,7 +42,7 @@ function App() {
   };
 
   return (
-    <>
+    <div style={appStyle}>
       <h1 style={titleStyle}>AlgoVision</h1>
       <h3 style={titleStyle}>Paste your algorithm here</h3>
 
@@ -47,7 +57,7 @@ function App() {
           Analyse
         </button>
       </div>
-    </>
+    </div>
   );
 }
 

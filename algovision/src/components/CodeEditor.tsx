@@ -19,7 +19,7 @@ function CodeEditor() {
       width="700px"
       height="400px"
       defaultLanguage="python"
-      theme="vs-light"
+      theme="vs-dark"
       onChange={handleEditorChange}
       options={editorOptions}
     />
