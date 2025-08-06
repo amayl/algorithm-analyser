@@ -24,6 +24,13 @@ function App() {
     overflow: "hidden",
   };
 
+  // get that button in the middle
+  const buttonStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
+
   return (
     <>
       <h1 style={titleStyle}>AlgoVision</h1>
@@ -31,6 +38,14 @@ function App() {
 
       <div style={editorStyle}>
         <CodeEditor />
+      </div>
+
+      <br />
+
+      <div style={buttonStyle}>
+        <button type="button" className="btn btn-primary btn-lg">
+          Analyse
+        </button>
       </div>
     </>
   );
