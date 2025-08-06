@@ -41,6 +41,11 @@ function App() {
     alignItems: "center",
   };
 
+  // check if the button works for now
+  const buttonCallback = () => {
+    console.log("the button works");
+  };
+
   return (
     <div style={appStyle}>
       <h1 style={titleStyle}>AlgoVision</h1>
@@ -53,7 +58,11 @@ function App() {
       <br />
 
       <div style={buttonStyle}>
-        <button type="button" className="btn btn-primary btn-lg">
+        <button
+          type="button"
+          className="btn btn-primary btn-lg"
+          onClick={buttonCallback}
+        >
           Analyse
         </button>
       </div>
