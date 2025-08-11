@@ -1,4 +1,4 @@
-import type React from "react";
+import React, { useState } from "react";
 import CodeEditor from "./components/CodeEditor";
 
 function App() {
@@ -41,9 +41,30 @@ function App() {
     alignItems: "center",
   };
 
+  // state to hold current code in editor
+  const [code, setCode] = useState<string>("");
+
   // check if the button works for now
-  const buttonCallback = () => {
-    console.log("the button works");
+  const analyseCode = async () => {
+    if (!code) {
+      alert("Please enter some code to analyse!");
+      return;
+    }
+
+    const res = await fetch("http://localhost:5001/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to analyze code");
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Analysis result:", data);
+    // TODO: Show the data on your UI as needed
   };
 
   return (
@@ -52,7 +73,7 @@ function App() {
       <h3 style={titleStyle}>Paste your algorithm here</h3>
 
       <div style={editorStyle}>
-        <CodeEditor />
+        <CodeEditor onChange={setCode} />
       </div>
 
       <br />
@@ -61,7 +82,7 @@ function App() {
         <button
           type="button"
           className="btn btn-primary btn-lg"
-          onClick={buttonCallback}
+          onClick={analyseCode}
         >
           Analyse
         </button>

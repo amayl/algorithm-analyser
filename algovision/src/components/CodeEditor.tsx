@@ -1,10 +1,15 @@
 import { Editor } from "@monaco-editor/react";
 
-function CodeEditor() {
+interface CodeEditorProps {
+  onChange: (value: string) => void;
+}
+
+function CodeEditor({ onChange }: CodeEditorProps) {
   // handle the changes
   const handleEditorChange = (value: string | undefined) => {
     // log every single edit to the console for some reason
     console.log("Current value: ", value);
+    onChange(value || "");
   };
 
   // editor config
