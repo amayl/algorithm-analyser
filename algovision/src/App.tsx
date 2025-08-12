@@ -51,14 +51,14 @@ function App() {
       return;
     }
 
-    const res = await fetch("http://localhost:5001/analyze", {
+    const res = await fetch("http://localhost:5000/analyse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code }),
     });
 
     if (!res.ok) {
-      console.error("Failed to analyze code");
+      console.error("Failed to analyse code");
       return;
     }
 

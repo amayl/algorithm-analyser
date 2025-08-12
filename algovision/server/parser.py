@@ -5,8 +5,8 @@ import ast
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-@app.route('/analyze', methods=['POST'])
-def analyze_code():
+@app.route('/analyse', methods=['POST'])
+def analyse_code():
     data = request.get_json()
     code = data.get('code', '')
 
@@ -30,4 +30,4 @@ def analyze_code():
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5000)
