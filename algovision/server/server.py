@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import ast
+from analyser import *
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -15,14 +16,18 @@ def analyse_code():
         num_funcs = len([node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)])
         num_loops = len([node for node in ast.walk(tree) if isinstance(node, (ast.For, ast.While))])
         num_lines = len(code.splitlines())
-        
+        analyser = ComplexityAnalyzer()
+        analyser.visit(tree)
+
         result = {
-            "complexity": "TBD",  # Your complexity logic here
+            "complexity": analyser.get_complexity(),  # Your complexity logic here
             "suggestions": [],
             "metrics": {
                 "lines": num_lines,
                 "functions": num_funcs,
-                "loops": num_loops
+                "loops": num_loops,
+                "max loop depth": analyser.max_depth,
+                "recursive": analyser.recursive
             }
         }
         return jsonify(result), 200
