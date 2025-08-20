@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import ast
-from analyser import *
+from openai import OpenAI
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -12,23 +11,14 @@ def analyse_code():
     code = data.get('code', '')
 
     try:
-        tree = ast.parse(code)
-        num_funcs = len([node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)])
-        num_loops = len([node for node in ast.walk(tree) if isinstance(node, (ast.For, ast.While))])
-        num_lines = len(code.splitlines())
-        analyser = ComplexityAnalyzer()
-        analyser.visit(tree)
+        client = OpenAI(api_key="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")
+        response = client.responses.create(
+            model="gpt-4o",
+            input=f"give me an analysis of the time and space complexity of this following code:\n {code}"
+        )
 
         result = {
-            "complexity": analyser.get_complexity(),  # Your complexity logic here
-            "suggestions": [],
-            "metrics": {
-                "lines": num_lines,
-                "functions": num_funcs,
-                "loops": num_loops,
-                "max loop depth": analyser.max_depth,
-                "recursive": analyser.recursive
-            }
+           response
         }
         return jsonify(result), 200
     except Exception as e:
