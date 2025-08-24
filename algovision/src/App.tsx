@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import CodeEditor from "./components/CodeEditor";
+import "katex/dist/katex.min.css"; // KaTeX styles
+import Latex from "react-latex-next"; // ✅ For LaTeX rendering
 
 function App() {
   // Dark theme app container
@@ -39,10 +41,14 @@ function App() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: "20px",
   };
 
   // state to hold current code in editor
   const [code, setCode] = useState<string>("");
+
+  // state to hold analysis result
+  const [analysis, setAnalysis] = useState<string>("");
 
   // check if the button works for now
   const analyseCode = async () => {
@@ -51,20 +57,23 @@ function App() {
       return;
     }
 
-    const res = await fetch("http://localhost:5000/analyse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/analyse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
 
-    if (!res.ok) {
-      console.error("Failed to analyse code");
-      return;
+      if (!res.ok) {
+        console.error("Failed to analyse code");
+        return;
+      }
+
+      const data = await res.json();
+      setAnalysis(data.analysis); // Save the result for rendering
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    const data = await res.json();
-    console.log("Analysis result:", data);
-    // TODO: Show the data on your UI as needed
   };
 
   return (
@@ -87,6 +96,17 @@ function App() {
           Analyse
         </button>
       </div>
+
+      {/* Display analysis with LaTeX rendering */}
+      {analysis && (
+        <div style={{ marginTop: "30px", textAlign: "center" }}>
+          <h2>Analysis Result</h2>
+
+          {/* Render LaTeX for complexity */}
+
+          <Latex>{analysis}</Latex>
+        </div>
+      )}
     </div>
   );
 }
