@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -8,8 +10,9 @@ CORS(app)  # Enable CORS for all routes
 @app.route('/analyse', methods=['POST'])
 def analyse_code():
     data = request.get_json()
-    code = data.get('code', '')
+    code = data.get('code', '') # get the code from the editor
 
+# im not typing this shit into client responses
     input_text = rf"""
 You are a strict assistant that analyses code complexity.
 Follow these rules:
@@ -36,10 +39,9 @@ Here is the code to analyse:
 {code}
 """
 
-
-
     try:
-        client = OpenAI(api_key="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")
+        load_dotenv()
+        client = OpenAI(api_key=os.getenv("API_KEY")) # dont wanna leak the api key ygm
         response = client.responses.create(
             top_p=1,
             max_output_tokens=300,
@@ -54,6 +56,7 @@ Here is the code to analyse:
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

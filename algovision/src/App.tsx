@@ -44,11 +44,43 @@ function App() {
     marginTop: "20px",
   };
 
+  // center the dropdown
+  const dropdownStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "20px",
+  };
+
   // state to hold current code in editor
   const [code, setCode] = useState<string>("");
 
   // state to hold analysis result
   const [analysis, setAnalysis] = useState<string>("");
+
+  // store the programming languages in an array
+  const programmingLanguages: string[] = [
+    "Python",
+    "JavaScript",
+    "TypeScript",
+    "Java",
+    "C#",
+    "C++",
+    "Objective-C",
+    "Ruby",
+    "PHP",
+    "VB",
+  ];
+
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    "Select Programming Language"
+  );
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleLanguageSelect = (language: string) => {
+    setSelectedLanguage(language);
+    setIsOpen(false);
+  };
 
   // check if the button works for now
   const analyseCode = async () => {
@@ -57,16 +89,28 @@ function App() {
       return;
     }
 
+    if (selectedLanguage === "Select Programming Language") {
+      alert("Please select a programming language!");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:5000/analyse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({
+          code,
+          language: selectedLanguage, // Include selected language in the request
+        }),
       });
 
       if (!res.ok) {
         console.error("Failed to analyse code");
         return;
+      }
+
+      if (res.status === 429) {
+        setAnalysis("Unable to analyse right now");
       }
 
       const data = await res.json();
@@ -81,8 +125,40 @@ function App() {
       <h1 style={titleStyle}>AlgoVision</h1>
       <h3 style={titleStyle}>Paste your algorithm here</h3>
 
+      <div style={dropdownStyle}>
+        <div className="dropdown">
+          <button
+            className="btn btn-secondary dropdown-toggle"
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {selectedLanguage}
+          </button>
+
+          <ul className={`dropdown-menu ${isOpen ? "show" : ""}`}>
+            {programmingLanguages.map((language, index) => (
+              <li key={index}>
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleLanguageSelect(language)}
+                >
+                  {language}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       <div style={editorStyle}>
-        <CodeEditor onChange={setCode} />
+        <CodeEditor
+          onChange={setCode}
+          language={
+            selectedLanguage !== "Select Programming Language"
+              ? selectedLanguage
+              : "python"
+          }
+        />
       </div>
 
       <br />
