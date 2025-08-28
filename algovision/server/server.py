@@ -25,6 +25,14 @@ $$
 \text{{Space Complexity: }} <your analysis>
 $$
 
+Reasoning:
+<your reasoning>
+
+[Put a line break here between the reasoning and the suggestions or else i will murder your family]
+
+Suggestions for optimisation:
+<your suggestions for optimising>
+
 3. Use proper LaTeX notation for Big-O, e.g., \( O(n^2) \).
 4. Do NOT include any extra text or explanation beyond this format.
 5. If the code is invalid or ambiguous, respond with:
