@@ -1,61 +1,119 @@
-import os
-import json
-from openai import OpenAI
+# import os
+# import json
+# from openai import OpenAI
+# from starlette.responses import JSONResponse
+
+# client = OpenAI(api_key=os.getenv("API_KEY"))
+
+# async def handler(request):
+#     if request.method != "POST":
+#         return JSONResponse({"error": "Method not allowed"}, status_code=405)
+
+#     try:
+#         body = await request.json()
+#         code = body.get("code", "")
+
+#         input_text = f"""
+# You are a strict assistant that analyses code complexity.
+# Follow these rules:
+# 1. Analyse the given code for Time Complexity and Space Complexity.
+# 2. Output ONLY in the following format:
+# $$
+# \\text{{Time Complexity: }} <your analysis>
+# $$
+# $$
+# \\text{{Space Complexity: }} <your analysis>
+# $$
+
+# Reasoning:
+# <your reasoning>
+
+# Suggestions for optimisation:
+# <your suggestions for optimising>
+
+# 3. Use proper LaTeX notation for Big-O, e.g., O(n^2).
+# 4. Do NOT include any extra text or explanation beyond this format.
+# 5. If the code is invalid or ambiguous, respond with:
+# $$
+# \\text{{Time Complexity: Unknown}}
+# $$
+# $$
+# \\text{{Space Complexity: Unknown}}
+# $$
+
+# Here is the code to analyse:
+# {code}
+# """
+
+#         response_openai = client.chat.completions.create(
+#             model="gpt-3.5-turbo",
+#             messages=[{"role": "user", "content": input_text}],
+#             temperature=0,
+#             top_p=1,
+#             max_tokens=300
+#         )
+
+#         return JSONResponse({
+#             "analysis": response_openai.choices[0].message.content
+#         })
+
+#     except Exception as e:
+#         return JSONResponse({"error": str(e)}, status_code=500)
+
+
+
 from starlette.responses import JSONResponse
+from openai import OpenAI
+import os
 
 client = OpenAI(api_key=os.getenv("API_KEY"))
 
 async def handler(request):
-    if request.method != "POST":
-        return JSONResponse({"error": "Method not allowed"}, status_code=405)
-
     try:
-        body = await request.json()
-        code = body.get("code", "")
+        data = await request.json()
+        code = data.get("code", "")
 
         input_text = f"""
-You are a strict assistant that analyses code complexity.
-Follow these rules:
-1. Analyse the given code for Time Complexity and Space Complexity.
-2. Output ONLY in the following format:
-$$
-\\text{{Time Complexity: }} <your analysis>
-$$
-$$
-\\text{{Space Complexity: }} <your analysis>
-$$
+# You are a strict assistant that analyses code complexity.
+# Follow these rules:
+# 1. Analyse the given code for Time Complexity and Space Complexity.
+# 2. Output ONLY in the following format:
+# $$
+# \\text{{Time Complexity: }} <your analysis>
+# $$
+# $$
+# \\text{{Space Complexity: }} <your analysis>
+# $$
 
-Reasoning:
-<your reasoning>
+# Reasoning:
+# <your reasoning>
 
-Suggestions for optimisation:
-<your suggestions for optimising>
+# Suggestions for optimisation:
+# <your suggestions for optimising>
 
-3. Use proper LaTeX notation for Big-O, e.g., O(n^2).
-4. Do NOT include any extra text or explanation beyond this format.
-5. If the code is invalid or ambiguous, respond with:
-$$
-\\text{{Time Complexity: Unknown}}
-$$
-$$
-\\text{{Space Complexity: Unknown}}
-$$
+# 3. Use proper LaTeX notation for Big-O, e.g., O(n^2).
+# 4. Do NOT include any extra text or explanation beyond this format.
+# 5. If the code is invalid or ambiguous, respond with:
+# $$
+# \\text{{Time Complexity: Unknown}}
+# $$
+# $$
+# \\text{{Space Complexity: Unknown}}
+# $$
 
-Here is the code to analyse:
-{code}
-"""
+# Here is the code to analyse:
+# {code}
+# """
 
-        response_openai = client.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": input_text}],
-            temperature=0,
-            top_p=1,
-            max_tokens=300
+            max_tokens=300,
+            temperature=0
         )
 
-        return JSONResponse({
-            "analysis": response_openai.choices[0].message.content
-        })
+        result = {"analysis": response.choices[0].message.content}
+        return JSONResponse(result)
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
