@@ -1,7 +1,19 @@
 {
   "functions": {
-    "api/*.py": {
+    "api/analyse.py": {
       "runtime": "python3.9"
     }
-  }
+  },
+  "builds": [
+    {
+      "src": "api/analyse.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/analyse",
+      "dest": "/api/analyse.py"
+    }
+  ]
 }
