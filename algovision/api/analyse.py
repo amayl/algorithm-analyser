@@ -1,15 +1,22 @@
-from starlette.responses import JSONResponse
+from http.server import BaseHTTPRequestHandler
+import json
 from openai import OpenAI
 import os
 
-client = OpenAI(api_key=os.getenv("API_KEY"))
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        try:
+            # Get the content length and read the request body
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+            
+            code = data.get("code", "")
 
-async def handler(request):
-    try:
-        data = await request.json()
-        code = data.get("code", "")
+            # Initialize OpenAI client
+            client = OpenAI(api_key=os.getenv("API_KEY"))
 
-        input_text = rf"""
+            input_text = rf"""
 You are a strict assistant that analyses code complexity.
 Follow these rules:
 1. Analyse the given code for Time Complexity and Space Complexity.
@@ -41,16 +48,36 @@ Here is the code to analyse:
 {code}
 """
 
-        # Call OpenAI API
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": input_text}],
-            max_tokens=300,
-            temperature=0
-        )
+            # Call OpenAI API
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": input_text}],
+                max_tokens=300,
+                temperature=0
+            )
 
-        result = {"analysis": response.choices[0].message.content}
-        return JSONResponse(result)
+            result = {"analysis": response.choices[0].message.content}
+            
+            # Send response
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'POST')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            self.end_headers()
+            self.wfile.write(json.dumps(result).encode())
 
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+        except Exception as e:
+            self.send_response(500)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            error_response = {"error": str(e)}
+            self.wfile.write(json.dumps(error_response).encode())
+
+    def do_OPTIONS(self):
+        # Handle preflight requests
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'POST')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
